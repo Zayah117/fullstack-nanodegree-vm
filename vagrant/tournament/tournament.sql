@@ -7,3 +7,10 @@
 -- these lines here.
 
 
+CREATE TABLE players(
+	id serial,
+	name text,
+	wins int,
+	matches int,
+	PRIMARY KEY( id )
+);
