@@ -121,8 +121,14 @@ def swissPairings():
     """
     conn = connect()
     cur = conn.cursor()
-    cur.execute("""SELECT a.id, b.id, a.name, b.name FROM players as a, players as b WHERE a.wins = b.wins and a.id > b.id ORDER BY a.wins DESC """)
-    my_tuple = cur.fetchall()
+    cur.execute("""SELECT id, name FROM players ORDER BY wins DESC""")
+
+    players = cur.fetchall()
+    my_tuple = ()
+    for i in range(len(players)):
+        if i % 2 == 0:
+            my_tuple = my_tuple + (players[i] + players[i + 1],)
+
     conn.close()
 
     return my_tuple
