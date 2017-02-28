@@ -14,3 +14,11 @@ CREATE TABLE players(
 	matches int,
 	PRIMARY KEY( id )
 );
+
+
+CREATE TABLE matches(
+	id serial,
+	winner int,
+	loser int,
+	PRIMARY KEY( id )
+);

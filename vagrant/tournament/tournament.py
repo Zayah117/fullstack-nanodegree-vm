@@ -12,7 +12,20 @@ def connect():
 
 
 def deleteMatches():
-    """Remove all the match records from the database."""
+    """Remove all the match records from the database.""" 
+    '''
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute("""DELETE FROM matches""")
+    conn.commit()
+    conn.close()
+    '''
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute("""UPDATE players SET matches = 0""")
+    cur.execute("""UPDATE players SET wins = 0""")
+    conn.commit()
+    conn.close()
 
 
 def deletePlayers():
@@ -45,7 +58,7 @@ def registerPlayer(name):
     """
     conn = connect()
     cur = conn.cursor()
-    QUERY = """INSERT INTO players (name) VALUES (%s);"""
+    QUERY = """INSERT INTO players (name, wins, matches) VALUES (%s, 0, 0);"""
     cur.execute(QUERY, (name,))
     conn.commit()
     conn.close()
@@ -64,6 +77,12 @@ def playerStandings():
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute("""SELECT * FROM players ORDER BY wins DESC;""")
+    players = cur.fetchall()
+    conn.close()
+    return players
 
 
 def reportMatch(winner, loser):
@@ -73,7 +92,17 @@ def reportMatch(winner, loser):
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
     """
- 
+    conn = connect()
+    cur = conn.cursor()
+
+    QUERY = """UPDATE players SET matches = matches + 1 WHERE id = %s or id = %s"""
+    cur.execute(QUERY, (str(winner), str(loser)))
+
+    QUERY = """UPDATE players SET wins = wins + 1 WHERE id = %s"""
+    cur.execute(QUERY, (str(winner),))
+
+    conn.commit()
+    conn.close()
  
 def swissPairings():
     """Returns a list of pairs of players for the next round of a match.
@@ -90,5 +119,12 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute("""SELECT a.id, b.id, a.name, b.name FROM players as a, players as b WHERE a.wins = b.wins and a.id > b.id ORDER BY a.wins DESC """)
+    my_tuple = cur.fetchall()
+    conn.close()
+
+    return my_tuple
 
 
