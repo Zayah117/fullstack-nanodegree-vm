@@ -13,4 +13,6 @@ Tournament Project
 
 6) Once inside the virtual machine: 'cd /vagrant/tournament' to navigate to the tournament folder
 
-7) Run 'python tournament_test.py' to test code
+7) Run 'psql -f tournament.sql' to setup database
+
+8) Run 'python tournament_test.py' to test code
