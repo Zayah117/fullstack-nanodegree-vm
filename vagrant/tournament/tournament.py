@@ -33,10 +33,10 @@ def deletePlayers():
 def countPlayers():
     """Returns the number of players currently registered."""
     conn, cur = connect()
-    cur.execute("""SELECT * FROM players;""")
-    rows = cur.fetchall()
+    cur.execute("""SELECT COUNT(*) FROM players;""")
+    count = cur.fetchall()
     conn.close()
-    return len(rows)
+    return count[0][0]
 
 
 def registerPlayer(name):
