@@ -8,39 +8,31 @@ import psycopg2
 
 def connect():
     """Connect to the PostgreSQL database.  Returns a database connection."""
-    return psycopg2.connect("dbname=tournament")
-
+    try:
+        db = psycopg2.connect("dbname=tournament")
+        cursor = db.cursor()
+        return db, cursor
+    except:
+        print("Could not connect to database")
 
 def deleteMatches():
     """Remove all the match records from the database.""" 
-    '''
-    conn = connect()
-    cur = conn.cursor()
-    cur.execute("""DELETE FROM matches""")
+    conn, cur = connect()
+    cur.execute("""TRUNCATE TABLE matches CASCADE;""")
     conn.commit()
     conn.close()
-    '''
-    conn = connect()
-    cur = conn.cursor()
-    cur.execute("""UPDATE players SET matches = 0""")
-    cur.execute("""UPDATE players SET wins = 0""")
-    conn.commit()
-    conn.close()
-
 
 def deletePlayers():
     """Remove all the player records from the database."""
-    conn = connect()
-    cur = conn.cursor()
-    cur.execute("""DELETE FROM players""")
+    conn, cur = connect()
+    cur.execute("""TRUNCATE TABLE players CASCADE;""")
     conn.commit()
     conn.close()
 
 
 def countPlayers():
     """Returns the number of players currently registered."""
-    conn = connect()
-    cur = conn.cursor()
+    conn, cur = connect()
     cur.execute("""SELECT * FROM players;""")
     rows = cur.fetchall()
     conn.close()
@@ -56,9 +48,8 @@ def registerPlayer(name):
     Args:
       name: the player's full name (need not be unique).
     """
-    conn = connect()
-    cur = conn.cursor()
-    QUERY = """INSERT INTO players (name, wins, matches) VALUES (%s, 0, 0);"""
+    conn, cur = connect()
+    QUERY = """INSERT INTO players (name) VALUES (%s);"""
     cur.execute(QUERY, (name,))
     conn.commit()
     conn.close()
@@ -77,8 +68,7 @@ def playerStandings():
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
-    conn = connect()
-    cur = conn.cursor()
+    conn, cur = connect()
     cur.execute("""SELECT * FROM players ORDER BY wins DESC;""")
     players = cur.fetchall()
     conn.close()
@@ -92,8 +82,7 @@ def reportMatch(winner, loser):
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
     """
-    conn = connect()
-    cur = conn.cursor()
+    conn, cur = connect()
 
     QUERY = """UPDATE players SET matches = matches + 1 WHERE id = %s or id = %s"""
     cur.execute(QUERY, (str(winner), str(loser)))
@@ -119,8 +108,7 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
-    conn = connect()
-    cur = conn.cursor()
+    conn, cur = connect()
     cur.execute("""SELECT id, name FROM players ORDER BY wins DESC""")
 
     players = cur.fetchall()
@@ -132,5 +120,3 @@ def swissPairings():
     conn.close()
 
     return my_tuple
-
-
