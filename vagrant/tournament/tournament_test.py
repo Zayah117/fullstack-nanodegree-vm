@@ -54,7 +54,7 @@ def testStandingsBeforeMatches():
     standings = playerStandings()
     if len(standings) < 2:
         raise ValueError("Players should appear in playerStandings even before "
-                         "they have played any matches.")
+                         "they have played any matches. Returns: " + str(standings))
     elif len(standings) > 2:
         raise ValueError("Only registered players should appear in standings.")
     if len(standings[0]) != 4:

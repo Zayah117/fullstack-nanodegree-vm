@@ -69,10 +69,10 @@ def playerStandings():
         matches: the number of matches the player has played
     """
     conn, cur = connect()
-    cur.execute("""SELECT * FROM players ORDER BY wins DESC;""")
-    players = cur.fetchall()
+    cur.execute("""SELECT players.id, players.name, COUNT(matches.winner) as wins, COUNT(matches.winner + matches.loser) as matches FROM players LEFT JOIN matches on players.id = matches.winner GROUP BY players.id;""")
+    rows = cur.fetchall()
     conn.close()
-    return players
+    return rows
 
 
 def reportMatch(winner, loser):
