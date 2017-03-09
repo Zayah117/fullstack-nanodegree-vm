@@ -79,7 +79,7 @@ def playerStandings():
                    FROM players LEFT JOIN matches ON players.id = matches.winner GROUP BY players.id;""")
 
     # Get id, name, wins, and matches by joining my two views
-    cur.execute("""SELECT matches_won.id, matches_won.name, matches_won.matches, matches_played.matches FROM matches_won LEFT JOIN matches_played ON matches_won.id = matches_played.id;""")
+    cur.execute("""SELECT matches_won.id, matches_won.name, matches_won.matches, matches_played.matches FROM matches_won LEFT JOIN matches_played ON matches_won.id = matches_played.id ORDER BY matches_won.matches;""")
 
     rows = cur.fetchall()
     conn.close()
@@ -123,15 +123,11 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
-    conn, cur = connect()
-    cur.execute("""SELECT id, name FROM players ORDER BY wins DESC""")
 
-    players = cur.fetchall()
+    players = playerStandings()
     my_tuple = ()
     for i in range(len(players)):
         if i % 2 == 0:
-            my_tuple = my_tuple + (players[i] + players[i + 1],)
-
-    conn.close()
+            my_tuple = my_tuple + (players[i][:2] + players[i + 1][:2],)
 
     return my_tuple
