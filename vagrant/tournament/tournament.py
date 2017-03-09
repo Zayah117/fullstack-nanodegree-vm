@@ -69,8 +69,15 @@ def playerStandings():
         matches: the number of matches the player has played
     """
     conn, cur = connect()
-    cur.execute("""SELECT players.id, players.name, COUNT(matches.winner) AS wins, COUNT(matches.winner + matches.loser) AS matches 
-                   FROM players LEFT JOIN matches ON players.id = matches.winner OR players.id = matches.loser GROUP BY players.id""")
+
+    cur.execute("""CREATE VIEW matches_played AS SELECT players.id AS id, players.name AS name, COUNT(matches.winner + matches.loser) AS matches 
+                   FROM players LEFT JOIN matches ON players.id = matches.winner OR players.id = matches.loser GROUP BY players.id;""")
+
+    cur.execute("""CREATE VIEW matches_won AS SELECT players.id AS id, players.name AS name, COUNT(matches.winner + matches.loser) AS matches 
+                   FROM players LEFT JOIN matches ON players.id = matches.winner GROUP BY players.id;""")
+
+    cur.execute("""SELECT matches_won.id, matches_won.name, matches_won.matches, matches_played.matches FROM matches_won LEFT JOIN matches_played ON matches_won.id = matches_played.id;""")
+
     rows = cur.fetchall()
     conn.close()
     return rows

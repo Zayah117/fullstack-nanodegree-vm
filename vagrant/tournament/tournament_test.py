@@ -56,9 +56,9 @@ def testStandingsBeforeMatches():
         raise ValueError("Players should appear in playerStandings even before "
                          "they have played any matches. Returns: " + str(standings))
     elif len(standings) > 2:
-        raise ValueError("Only registered players should appear in standings.")
+        raise ValueError("Only registered players should appear in standings." + str(standings))
     if len(standings[0]) != 4:
-        raise ValueError("Each playerStandings row should have four columns.")
+        raise ValueError("Each playerStandings row should have four columns." + str(standings))
     [(id1, name1, wins1, matches1), (id2, name2, wins2, matches2)] = standings
     if matches1 != 0 or matches2 != 0 or wins1 != 0 or wins2 != 0:
         raise ValueError(
