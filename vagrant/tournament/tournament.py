@@ -69,7 +69,15 @@ def playerStandings():
         matches: the number of matches the player has played
     """
     conn, cur = connect()
-    cur.execute("""SELECT players.id, players.name, COUNT(matches.winner) as wins, COUNT(matches.winner + matches.loser) as matches FROM players LEFT JOIN matches on players.id = matches.winner GROUP BY players.id;""")
+    cur.execute("""SELECT players.id, players.name, COUNT(matches.winner) AS wins, COUNT(matches.winner + matches.loser) AS matches 
+                   FROM players LEFT JOIN matches ON players.id = matches.winner OR players.id = matches.loser GROUP BY players.id""")
+    rows = cur.fetchall()
+    conn.close()
+    return rows
+
+def getMatches():
+    conn, cur = connect()
+    cur.execute("""SELECT * FROM matches""")
     rows = cur.fetchall()
     conn.close()
     return rows
@@ -84,11 +92,8 @@ def reportMatch(winner, loser):
     """
     conn, cur = connect()
 
-    QUERY = """UPDATE players SET matches = matches + 1 WHERE id = %s or id = %s"""
+    QUERY = """INSERT INTO matches (winner, loser) VALUES(%s, %s);"""
     cur.execute(QUERY, (str(winner), str(loser)))
-
-    QUERY = """UPDATE players SET wins = wins + 1 WHERE id = %s"""
-    cur.execute(QUERY, (str(winner),))
 
     conn.commit()
     conn.close()
