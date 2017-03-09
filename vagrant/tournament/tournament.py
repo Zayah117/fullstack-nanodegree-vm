@@ -70,12 +70,15 @@ def playerStandings():
     """
     conn, cur = connect()
 
+    # matches_played view
     cur.execute("""CREATE VIEW matches_played AS SELECT players.id AS id, players.name AS name, COUNT(matches.winner + matches.loser) AS matches 
                    FROM players LEFT JOIN matches ON players.id = matches.winner OR players.id = matches.loser GROUP BY players.id;""")
 
+    # matches_won view
     cur.execute("""CREATE VIEW matches_won AS SELECT players.id AS id, players.name AS name, COUNT(matches.winner + matches.loser) AS matches 
                    FROM players LEFT JOIN matches ON players.id = matches.winner GROUP BY players.id;""")
 
+    # Get id, name, wins, and matches by joining my two views
     cur.execute("""SELECT matches_won.id, matches_won.name, matches_won.matches, matches_played.matches FROM matches_won LEFT JOIN matches_played ON matches_won.id = matches_played.id;""")
 
     rows = cur.fetchall()
