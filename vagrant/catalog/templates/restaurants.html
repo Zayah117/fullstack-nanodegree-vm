@@ -6,7 +6,13 @@
 
 	<h1>Restaurants</h1>
 
-	<a href="{{url_for('newRestaurant')}}">Add new restaurant</a>
+	{% if 'username' not in session %}
+		<a href="{{url_for('showLogin')}}">Log in</a>
+	{% else %}
+		<a href="{{url_for('newRestaurant')}}">Add new restaurant</a>
+		<br>
+		<a href="{{url_for('disconnect')}}">Log out</a>
+	{% endif %}
 
 	{% with messages = get_flashed_messages() %}
 		{% if messages %}
