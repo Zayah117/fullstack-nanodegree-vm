@@ -5,8 +5,7 @@
 <body>
 
 	<h1>{{restaurant.name}}</h1>
-	<a href="{{url_for('newMenuItem', restaurant_id=restaurant.id)}}">Add new item</a>
-	<br>
+	
 	<a href="{{url_for('showRestaurants')}}">Back</a>
 
 	{% with messages = get_flashed_messages() %}

@@ -275,7 +275,7 @@ def showRestaurants():
 @app.route('/restaurants/new', methods=['GET', 'POST'])
 def newRestaurant():
     if request.method == 'POST':
-        newItem = Restaurant(name = request.form['name'])
+        newItem = Restaurant(name = request.form['name'], user_id=login_session['user_id'])
         session.add(newItem)
         session.commit()
         flash("new restaurant created")
@@ -295,6 +295,8 @@ def editRestaurant(restaurant_id):
         return redirect(url_for('showRestaurants'))
     else:
         item = session.query(Restaurant).filter_by(id=restaurant_id).one()
+        if item.user_id != login_session['user_id']:
+            return "<script>function myFunction() {alert('Unauthorized');}</script><body onload='myFunction()'>"
         return render_template('editrestaurant.html', restaurant_id=restaurant_id, item=item)
 
 
@@ -308,14 +310,20 @@ def deleteRestaurant(restaurant_id):
         return redirect(url_for('showRestaurants'))
     else:
         item = session.query(Restaurant).filter_by(id=restaurant_id).one()
+        if item.user_id != login_session['user_id']:
+            return "<script>function myFunction() {alert('Unauthorized');}</script><body onload='myFunction()'>"
         return render_template('deleterestaurant.html', item=item)
 
 
 @app.route('/restaurants/<int:restaurant_id>/')
 def showMenu(restaurant_id):
     restaurant = session.query(Restaurant).filter_by(id = restaurant_id).one()
+    creator = getUserInfo(restaurant.user_id)
     items = session.query(MenuItem).filter_by(restaurant_id = restaurant.id)
-    return render_template('menu.html', restaurant=restaurant, items=items)
+    if 'username' not in login_session or creator.id != login_session['user_id']:
+        return render_template('publicmenu.html', items = items, restaurant = restaurant, creator = creator)
+    else:
+        return render_template('menu.html', restaurant=restaurant, items=items)
 
 
 @app.route('/restaurants/<int:restaurant_id>/new', methods=['GET', 'POST'])
@@ -347,6 +355,8 @@ def editMenuItem(restaurant_id, menu_id):
         return redirect(url_for('showMenu', restaurant_id=restaurant_id))
     else:
         item = session.query(MenuItem).filter_by(id=menu_id).one()
+        if item.user_id != login_session['user_id']:
+            return "<script>function myFunction() {alert('Unauthorized');}</script><body onload='myFunction()'>"
         return render_template('editmenuitem.html', restaurant_id=restaurant_id, menu_id=menu_id, item=item)
 
 
@@ -360,6 +370,8 @@ def deleteMenuItem(restaurant_id, menu_id):
         return redirect(url_for('showMenu', restaurant_id=restaurant_id))
     else:
         item = session.query(MenuItem).filter_by(id=menu_id).one()
+        if item.user_id != login_session['user_id']:
+            return "<script>function myFunction() {alert('Unauthorized');}</script><body onload='myFunction()'>"
         return render_template('deletemenuitem.html', restaurant_id=restaurant_id, item=item)
 
 def createUser(login_session):
