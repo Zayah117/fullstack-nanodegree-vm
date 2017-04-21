@@ -340,6 +340,9 @@ def newMenuItem(restaurant_id):
         flash("new menu item created.")
         return redirect(url_for('showMenu', restaurant_id=restaurant_id))
     else:
+        item = session.query(Restaurant).filter_by(id=restaurant_id).one()
+        if item.user_id != login_session['user_id']:
+            return "<script>function myFunction() {alert('Unauthorized');}</script><body onload='myFunction()'>"
         return render_template('newmenuitem.html', restaurant_id=restaurant_id)
 
 
