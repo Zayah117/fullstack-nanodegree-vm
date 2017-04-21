@@ -281,6 +281,8 @@ def newRestaurant():
         flash("new restaurant created")
         return redirect(url_for('showRestaurants'))
     else:
+        if 'username' not in login_session:
+            return "<script>function myFunction() {alert('Unauthorized');}</script><body onload='myFunction()'>"
         return render_template('newrestaurant.html')
 
 
