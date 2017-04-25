@@ -299,6 +299,8 @@ def newRestaurant():
 def editRestaurant(restaurant_id):
     if request.method == 'POST':
         newEdit = session.query(Restaurant).filter_by(id=restaurant_id).one()
+        if newEdit.user_id != login_session['user_id']:
+            return "<script>function myFunction() {alert('Unauthorized');}</script><body onload='myFunction()'>"
         newEdit.name = request.form['edit']
         session.add(newEdit)
         session.commit()
@@ -316,6 +318,8 @@ def editRestaurant(restaurant_id):
 def deleteRestaurant(restaurant_id):
     if request.method == 'POST':
         item = session.query(Restaurant).filter_by(id=restaurant_id).one()
+        if item.user_id != login_session['user_id']:
+            return "<script>function myFunction() {alert('Unauthorized');}</script><body onload='myFunction()'>"
         session.delete(item)
         session.commit()
         flash("restaurant deleted")
@@ -362,6 +366,8 @@ def newMenuItem(restaurant_id):
 def editMenuItem(restaurant_id, menu_id):
     if request.method == 'POST':
         newEdit = session.query(MenuItem).filter_by(id=menu_id).one()
+        if newEdit.user_id != login_session['user_id']:
+            return "<script>function myFunction() {alert('Unauthorized');}</script><body onload='myFunction()'>"
         newEdit.name = request.form['edit']
         newEdit.description = request.form['description']
         newEdit.price = request.form['price']
@@ -382,6 +388,8 @@ def editMenuItem(restaurant_id, menu_id):
 def deleteMenuItem(restaurant_id, menu_id):
     if request.method == 'POST':
         item = session.query(MenuItem).filter_by(id=menu_id).one()
+        if item.user_id != login_session['user_id']:
+            return "<script>function myFunction() {alert('Unauthorized');}</script><body onload='myFunction()'>"
         session.delete(item)
         session.commit()
         flash("menu item deleted.")
