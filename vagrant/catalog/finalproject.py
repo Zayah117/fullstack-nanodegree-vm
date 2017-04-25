@@ -346,6 +346,10 @@ def showMenu(restaurant_id):
 @login_required
 def newMenuItem(restaurant_id):
     if request.method == 'POST':
+        item = session.query(Restaurant).filter_by(id=restaurant_id).one()
+        if item.user_id != login_session['user_id']:
+            return "<script>function myFunction() {alert('Unauthorized');}</script><body onload='myFunction()'>"
+            
         newItem = MenuItem(name = request.form['name'], restaurant_id=restaurant_id)
         newItem.description = request.form['description']
         newItem.price = request.form['price']
