@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
-app = Flask(__name__, static_url_path='/static/*')
 
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
@@ -16,6 +15,8 @@ import httplib2
 import json
 from flask import make_response
 import requests
+
+app = Flask(__name__, static_url_path='/static/*')
 
 CLIENT_ID = json.loads(open('client_secrets.json', 'r').read())['web']['client_id']
 
